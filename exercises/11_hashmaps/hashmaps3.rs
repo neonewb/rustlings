@@ -31,6 +31,59 @@ fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
+        scores.entry(team_1_name)
+            .and_modify(|e| {
+                e.goals_scored += team_1_score;
+                e.goals_conceded += team_2_score;
+            })
+            .or_insert(TeamScores {
+                goals_scored: team_1_score,
+                goals_conceded: team_2_score,
+            });
+
+        scores.entry(team_2_name)
+            .and_modify(|e| {
+                e.goals_scored += team_2_score;
+                e.goals_conceded += team_1_score;
+            })
+            .or_insert(TeamScores {
+                goals_scored: team_2_score,
+                goals_conceded: team_1_score,
+            });
+
+        // let team_1_value = scores.get(team_1_name);
+        
+        // match team_1_value {
+        //     Option::Some(team_scores) => {
+        //         scores.insert(team_1_name, TeamScores {
+        //             goals_scored: team_scores.goals_scored + team_1_score,
+        //             goals_conceded: team_scores.goals_conceded + team_2_score,
+        //         });
+        //     }
+        //     Option::None => {
+        //         scores.insert(team_1_name, TeamScores {
+        //             goals_scored: team_1_score,
+        //             goals_conceded: team_2_score,
+        //         });
+        //     }
+        // }
+
+        // let team_2_value = scores.get(team_2_name);
+        
+        // match team_2_value {
+        //     Option::Some(team_scores) => {
+        //         scores.insert(team_2_name, TeamScores {
+        //             goals_scored: team_scores.goals_scored + team_2_score,
+        //             goals_conceded: team_scores.goals_conceded + team_1_score,
+        //         });
+        //     }
+        //     Option::None => {
+        //         scores.insert(team_2_name, TeamScores {
+        //             goals_scored: team_2_score,
+        //             goals_conceded: team_1_score,
+        //         });
+        //     }
+        // }
     }
 
     scores
@@ -73,5 +126,13 @@ England,Spain,1,0";
         let team = scores.get("Spain").unwrap();
         assert_eq!(team.goals_scored, 0);
         assert_eq!(team.goals_conceded, 3);
+    }
+
+    #[test]
+    fn validate_team_score_3() {
+        let scores = build_scores_table(RESULTS);
+        let team = scores.get("France").unwrap();
+        assert_eq!(team.goals_scored, 5);
+        assert_eq!(team.goals_conceded, 5);
     }
 }
