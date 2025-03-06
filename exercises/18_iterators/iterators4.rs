@@ -10,6 +10,13 @@ fn factorial(num: u64) -> u64 {
     // - additional variables
     // For an extra challenge, don't use:
     // - recursion
+    if num == 0 {
+        return 1;
+    }
+
+    (1..=num)
+        .reduce(|acc, num| acc * num)
+        .unwrap()
 }
 
 fn main() {
